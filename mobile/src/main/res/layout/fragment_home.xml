@@ -1,0 +1,164 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.coded2.wearbatteryalert.HomeFragment">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/phoneContent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="5dp"
+        app:layout_constraintHorizontal_bias="0.0">
+
+        <TextView
+            android:id="@+id/legendPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="@string/legend_phone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/btryPhoneGauge"
+            android:textSize="30sp"
+             />
+
+        <com.github.anastr.speedviewlib.SpeedView
+            android:id="@+id/btryPhoneGauge"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/btryPhoneTime"
+            app:layout_constraintTop_toBottomOf="@+id/legendPhone"
+            app:sv_highSpeedColor="@android:color/holo_green_light"
+            app:sv_lowSpeedColor="@android:color/holo_red_light"
+            app:sv_lowSpeedPercent="15"
+            app:sv_markColor="@color/common_google_signin_btn_text_dark_focused"
+            app:sv_maxSpeed="100"
+            app:sv_mediumSpeedColor="?android:attr/colorPressedHighlight"
+            app:sv_mediumSpeedPercent="70"
+            app:sv_minSpeed="0"
+            app:sv_speedTextFormat="INTEGER"
+            app:sv_speedTextPosition="BOTTOM_CENTER"
+            app:sv_speedTextSize="40dp"
+            app:sv_speedometerMode="TOP"
+            app:sv_speedometerWidth="15dp"
+            app:sv_unit="%"
+            app:sv_unitTextSize="40dp"
+            app:sv_withTremble="false" />
+
+
+        <TextView
+            android:id="@+id/btryPhoneTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="@string/time_place_holder"
+            android:textAlignment="center"
+            android:textSize="40sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/btryPhoneGauge"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintLeft_toRightOf="@+id/btryPhoneGauge"
+            app:layout_constraintRight_toLeftOf="@+id/phoneChargeState"
+            app:layout_constraintTop_toTopOf="@+id/btryPhoneGauge" />
+
+        <ImageView
+            android:id="@+id/phoneChargeState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/charge_state"
+            app:srcCompat="@drawable/charging_flag"
+            app:layout_constraintLeft_toRightOf="@+id/btryPhoneTime"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/btryPhoneGauge"
+            app:layout_constraintTop_toTopOf="@+id/btryPhoneGauge"/>
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/watchContent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp"
+        android:alpha="0.3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phoneContent"
+        app:layout_constraintVertical_bias="0.4">
+
+
+        <TextView
+            android:id="@+id/legendWatch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/legend_watch"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toTopOf="@+id/btryWatchGauge"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <com.github.anastr.speedviewlib.SpeedView
+            android:id="@+id/btryWatchGauge"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/btryWatchTime"
+            app:layout_constraintTop_toBottomOf="@+id/legendWatch"
+            app:sv_highSpeedColor="@android:color/holo_green_light"
+            app:sv_lowSpeedColor="@android:color/holo_red_light"
+            app:sv_lowSpeedPercent="15"
+            app:sv_markColor="@color/common_google_signin_btn_text_dark_focused"
+            app:sv_maxSpeed="100"
+            app:sv_mediumSpeedColor="?android:attr/colorPressedHighlight"
+            app:sv_mediumSpeedPercent="70"
+            app:sv_minSpeed="0"
+            app:sv_speedTextFormat="INTEGER"
+            app:sv_speedTextPosition="BOTTOM_CENTER"
+            app:sv_speedTextSize="40dp"
+            app:sv_speedometerMode="TOP"
+            app:sv_speedometerWidth="15dp"
+            app:sv_unit="%"
+            app:sv_unitTextSize="40dp" />
+
+
+        <TextView
+            android:id="@+id/btryWatchTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="@string/time_place_holder"
+            android:textAlignment="center"
+            android:textSize="40sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/btryWatchGauge"
+            app:layout_constraintLeft_toRightOf="@+id/btryWatchGauge"
+            app:layout_constraintRight_toLeftOf="@+id/watchChargeState"
+            app:layout_constraintTop_toTopOf="@+id/btryWatchGauge" />
+
+
+        <ImageView
+            android:id="@+id/watchChargeState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/charge_state"
+            app:layout_constraintBottom_toBottomOf="@+id/btryWatchGauge"
+            app:layout_constraintLeft_toRightOf="@+id/btryWatchTime"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btryWatchGauge"
+            app:srcCompat="@drawable/discharging_flag" />
+
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</android.support.constraint.ConstraintLayout>

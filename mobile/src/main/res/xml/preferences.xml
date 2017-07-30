@@ -1,0 +1,24 @@
+<PreferenceScreen
+    android:key="preferences"
+    xmlns:cd2="http://schemas.android.com/com.coded2"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+        <PreferenceCategory
+            android:title="@string/pref_header_general">
+                <SwitchPreference
+                    android:title="@string/label_service_enable"
+                    android:key="@string/key_service_enable"
+                    android:defaultValue="true"/>
+        </PreferenceCategory>
+
+        <PreferenceCategory android:title="@string/pref_header_low_battery">
+                <SwitchPreference
+                    android:title="@string/label_low_battery_alert"
+                    android:key="@string/key_key_low_battery_alert"
+                    android:defaultValue="false"/>
+
+                 <com.coded2.preference.NumberPickerPreference
+                     android:title="@string/label_battery_low_level"
+                     android:key="@string/key_battery_low_level"/>
+
+        </PreferenceCategory>
+</PreferenceScreen>
