@@ -2,17 +2,16 @@ package com.coded2.wearbatteryalert;
 
 
 import android.app.Fragment;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +22,19 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.github.anastr.speedviewlib.base.Gauge;
+import com.google.android.gms.common.api.BooleanResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.CapabilityApi;
+import com.google.android.gms.wearable.CapabilityInfo;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.Wearable;
+
+import java.util.Set;
+
 
 
 
@@ -32,6 +43,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
  */
 public class HomeFragment extends Fragment {
 
+
+
+    private String BATTERY_STATUS_CAPABILITY = "battery_status";
+    private String PATH_BATTERY_REQUEST = "/wear_battery_request";
 
     private ToggleButton toggleButton;
 
@@ -44,10 +59,18 @@ public class HomeFragment extends Fragment {
     //private TextView watchTime;
 
 
-    private GoogleApiClient wearAPI;
+
+    private GoogleApiClient wearApiClient;
+    private Node capbilityNode;
 
     public HomeFragment() {
 
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initGoogleAPI();
     }
 
     private BroadcastReceiver phoneBatteryChangeReceiver = new BroadcastReceiver() {
@@ -113,6 +136,7 @@ public class HomeFragment extends Fragment {
     };
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)  {
@@ -134,46 +158,15 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(),"Weareble feature will be avaliable soon",Toast.LENGTH_SHORT).show();
+                requestBattertStatysFromWear();
             }
         });
 
-
-
-
-
-        /*
-        wearAPI =  new GoogleApiClient.Builder(getContext())
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(@Nullable Bundle bundle) {
-                        Log.d(Constants.PACKAGE_NAME,"Conectado");
-                    }
-
-                    @Override
-                    public void onConnectionSuspended(int i) {
-                        Log.d(Constants.PACKAGE_NAME,"Conexao Suspensa");
-                    }
-                })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Log.d(Constants.PACKAGE_NAME,"Falha na conexao");
-                    }
-                })
-                .addApi(Wearable.API)
-                .build();
-                wearAPI.connect();
-
-
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        wearAPI.getContext().registerReceiver(watchBatteryReceiver,ifilter);
-        */
-
-
-
+        wearApiClient.connect();
         return view;
     }
+
+
 
 
     @Override
@@ -181,18 +174,141 @@ public class HomeFragment extends Fragment {
         super.onResume();
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         getActivity().registerReceiver(this.phoneBatteryChangeReceiver, ifilter);
-    }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                requestBattertStatysFromWear();
+            }
+        },3000);
+
+        Wearable.MessageApi.addListener(wearApiClient,messageListener);
+
+
+   }
+
+
+   private MessageApi.MessageListener messageListener = new MessageApi.MessageListener() {
+       @Override
+       public void onMessageReceived(MessageEvent event) {
+            String data = new String(event.getData());
+           Log.d(Constants.PACKAGE_NAME, "received data from wear: "+data);
+
+           final String[] dataStr = data.split("@");
+           int level = Integer.valueOf(dataStr[0]);
+           boolean isCharging = Boolean.valueOf(dataStr[1]);
+
+
+           watchBatteryGauge.speedTo(level,3000);
+
+           if(isCharging){
+               watchChargeState.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.charging_flag,null));
+           }else{
+               watchChargeState.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.discharging_flag,null));
+           }
+
+
+           HomeFragment.this.getView().findViewById(R.id.watchContent).setAlpha(1);
+
+       }
+   };
 
     @Override
     public void onPause() {
         super.onPause();
         getActivity().unregisterReceiver(phoneBatteryChangeReceiver);
+        Wearable.MessageApi.removeListener(wearApiClient,messageListener);
     }
-
-
 
 
     public interface OnBatteryChargeListener{
         public void OnBatteryCharge(boolean isCharging);
+    }
+
+
+    private void initGoogleAPI() {
+        wearApiClient = new GoogleApiClient.Builder(getActivity()).
+                addApi(Wearable.API).
+                addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(@Nullable Bundle bundle) {
+                        Log.d(Constants.PACKAGE_NAME,"onConnected()");
+                        Wearable.CapabilityApi.addCapabilityListener(
+                                wearApiClient,
+                                new CapabilityApi.CapabilityListener() {
+                                    @Override
+                                    public void onCapabilityChanged(CapabilityInfo capabilityInfo) {
+                                        Log.d(Constants.PACKAGE_NAME, "onCapabilityChanged(): " + capabilityInfo);
+
+                                        capbilityNode = pickBestNodeId(capabilityInfo.getNodes());
+                                    }
+                                },
+                                BATTERY_STATUS_CAPABILITY);
+
+                        PendingResult<CapabilityApi.GetCapabilityResult> pendingResult =
+                                Wearable.CapabilityApi.getCapability(
+                                        wearApiClient,
+                                        BATTERY_STATUS_CAPABILITY,
+                                        CapabilityApi.FILTER_ALL);
+
+                        pendingResult.setResultCallback(new ResultCallback<CapabilityApi.GetCapabilityResult>(){
+
+                            @Override
+                            public void onResult(@NonNull CapabilityApi.GetCapabilityResult getCapabilityResult) {
+                                Log.d(Constants.PACKAGE_NAME, "onResult(): " + getCapabilityResult);
+
+                                if (getCapabilityResult.getStatus().isSuccess()) {
+                                    CapabilityInfo capabilityInfo = getCapabilityResult.getCapability();
+                                    capbilityNode = pickBestNodeId(capabilityInfo.getNodes());
+                                } else {
+                                    Log.d(Constants.PACKAGE_NAME, "Failed CapabilityApi: " + getCapabilityResult.getStatus());
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int i) {
+                        Log.d(Constants.PACKAGE_NAME,"onConnectionSuspended()");
+                    }
+                }).
+                build();
+    }
+
+
+    private Node pickBestNodeId(Set<Node> nodes) {
+        Log.d(Constants.PACKAGE_NAME,"pickBestNodeId()");
+
+        Node bestNode = null;
+
+        for(Node node: nodes){
+            bestNode = node;
+        }
+        Log.d(Constants.PACKAGE_NAME, "Best node: "+bestNode);
+
+        return bestNode;
+    }
+
+
+    public void requestBattertStatysFromWear(){
+        Log.d(Constants.PACKAGE_NAME,"requestBattertStatysFromWear()");
+        if(capbilityNode!=null){
+            Log.d(getActivity().getPackageName(),"node name: "+capbilityNode.getDisplayName());
+            final PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(wearApiClient, capbilityNode.getId(), PATH_BATTERY_REQUEST, null);
+            result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+                @Override
+                public void onResult(@NonNull MessageApi.SendMessageResult sendMessageResult) {
+                        if(sendMessageResult.getStatus().isSuccess()){
+                                Toast.makeText(getActivity(),"Request Battery from your wearable", Toast.LENGTH_SHORT).show();
+                                Log.d(Constants.PACKAGE_NAME,sendMessageResult.getStatus().toString());
+                        }else{
+                                Toast.makeText(getActivity(),"Failed on wear battery status request", Toast.LENGTH_SHORT).show();
+                                Log.e(getActivity().getPackageName(),sendMessageResult.getStatus().toString());
+                        }
+                }
+            });
+        }else{
+            Toast.makeText(getActivity(), "device weareble not found", Toast.LENGTH_SHORT).show();
+        }
     }
 }

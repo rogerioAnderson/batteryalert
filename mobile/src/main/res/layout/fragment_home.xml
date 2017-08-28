@@ -121,6 +121,7 @@
             app:sv_mediumSpeedColor="?android:attr/colorPressedHighlight"
             app:sv_mediumSpeedPercent="70"
             app:sv_minSpeed="0"
+            app:sv_withTremble="false"
             app:sv_speedTextFormat="INTEGER"
             app:sv_speedTextPosition="BOTTOM_CENTER"
             app:sv_speedTextSize="40dp"

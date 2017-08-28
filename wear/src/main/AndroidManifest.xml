@@ -1,7 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.coded2.wearbatteryalert">
 
     <uses-feature android:name="android.hardware.type.watch" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +11,37 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
 
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".BatterySatusListener"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+
+                <data
+                    android:host="*"
+                    android:path="/wear_battery_request"
+                    android:scheme="wear" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".BatteryChangeReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
