@@ -10,15 +10,16 @@
                     android:defaultValue="true"/>
         </PreferenceCategory>
 
-        <PreferenceCategory android:title="@string/pref_header_low_battery">
-                <SwitchPreference
-                    android:title="@string/label_low_battery_alert"
-                    android:key="@string/key_key_low_battery_alert"
-                    android:defaultValue="false"/>
+       <PreferenceCategory android:title="@string/pref_header_phone">
+        <SwitchPreference
+            android:title="@string/label_low_battery_alert"
+            android:key="@string/key_low_battery_alert"
+            android:defaultValue="false"/>
+       </PreferenceCategory>
+       <EditTextPreference
+           android:key="@string/key_low_batery_level"
+           android:title="@string/title_low_battery_percent"
 
-                 <com.coded2.preference.NumberPickerPreference
-                     android:title="@string/label_battery_low_level"
-                     android:key="@string/key_battery_low_level"/>
+           android:defaultValue="15"/>
 
-        </PreferenceCategory>
 </PreferenceScreen>

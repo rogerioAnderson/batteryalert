@@ -97,8 +97,11 @@
     <string name="developed_by">Developed by Rogerio Souza</string>
     <string name="pref_header_low_battery">Low Battery Alert</string>
     <string name="label_low_battery_alert">Enable low level alert</string>
-    <string name="key_key_low_battery_alert">low_battery_alert</string>
+    <string name="key_low_battery_alert">low_battery_alert</string>
     <string name="label_battery_low_level">Battery Level</string>
     <string name="key_battery_low_level">battery_low_level</string>
+    <string name="pref_header_phone">Phone</string>
+    <string name="key_low_batery_level">key_low_batery_level</string>
+    <string name="title_low_battery_percent">Alert when Battery is lower then</string>
 
 </resources>
