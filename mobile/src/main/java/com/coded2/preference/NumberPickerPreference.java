@@ -6,6 +6,7 @@ import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
 import com.coded2.wearbatteryalert.R;
 
@@ -18,14 +19,11 @@ public class NumberPickerPreference extends DialogPreference{
 
     private final int DEFAULT_VALUE = 20;
     private int value = DEFAULT_VALUE;
-
+    private View view;
     private NumberPicker numberPicker;
 
     public NumberPickerPreference(Context context, AttributeSet attrs) {
         super(context,attrs);
-
-        setLayoutResource(R.layout.numberpicker_preference);
-
     }
 
 
@@ -33,7 +31,7 @@ public class NumberPickerPreference extends DialogPreference{
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
 
-        numberPicker = (NumberPicker) view.findViewById(R.id.picker);
+        numberPicker = (NumberPicker) view.findViewById(R.id.number_picker_pref);
 
         numberPicker.setMinValue(0);
         numberPicker.setMaxValue(100);
@@ -48,7 +46,7 @@ public class NumberPickerPreference extends DialogPreference{
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         if (restorePersistedValue) {
-            final int persistedInt = getPersistedInt(DEFAULT_VALUE);
+            Integer persistedInt = getPersistedInt(DEFAULT_VALUE);
             value = persistedInt;
         } else {
             value = (Integer)defaultValue;
@@ -62,6 +60,22 @@ public class NumberPickerPreference extends DialogPreference{
         if (positiveResult) {
             value = numberPicker.getValue();
             persistInt(value);
+        }
+    }
+
+
+    @Override
+    protected void onBindView(View view) {
+        super.onBindView(view);
+        this.view = view;
+        updateValue();
+    }
+
+    private void updateValue() {
+        int value =  getSharedPreferences().getInt(getKey(),DEFAULT_VALUE);
+        if(view !=null){
+            TextView TxtValue = (TextView) view.findViewById(R.id.pref_view_value);
+            TxtValue.setText(String.valueOf(value));
         }
     }
 

@@ -16,10 +16,13 @@
             android:key="@string/key_low_battery_alert"
             android:defaultValue="false"/>
        </PreferenceCategory>
-       <EditTextPreference
-           android:key="@string/key_low_batery_level"
-           android:title="@string/title_low_battery_percent"
 
-           android:defaultValue="15"/>
+        <com.coded2.preference.NumberPickerPreference
+            android:key="@string/key_low_batery_level"
+            android:title="@string/title_low_battery_percent"
+            android:widgetLayout="@layout/custom_value_view_preference"
+            android:dialogLayout="@layout/numberpicker_preference"
+            android:dependency="@string/key_low_battery_alert">
+        </com.coded2.preference.NumberPickerPreference>
 
 </PreferenceScreen>
