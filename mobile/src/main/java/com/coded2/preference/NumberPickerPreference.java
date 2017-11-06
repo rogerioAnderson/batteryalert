@@ -1,10 +1,15 @@
 package com.coded2.preference;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
+import android.preference.Preference;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -28,7 +33,15 @@ public class NumberPickerPreference extends DialogPreference{
 
 
     @Override
+    protected View onCreateView(ViewGroup parent) {
+        updateValue();
+        return super.onCreateView(parent);
+    }
+
+    @Override
     protected void onBindDialogView(View view) {
+
+        this.view = view;
         super.onBindDialogView(view);
 
         numberPicker = (NumberPicker) view.findViewById(R.id.number_picker_pref);
@@ -36,6 +49,8 @@ public class NumberPickerPreference extends DialogPreference{
         numberPicker.setMinValue(0);
         numberPicker.setMaxValue(100);
         numberPicker.setValue(value);
+
+
     }
 
     @Override
@@ -61,6 +76,8 @@ public class NumberPickerPreference extends DialogPreference{
             value = numberPicker.getValue();
             persistInt(value);
         }
+
+        updateValue();
     }
 
 
@@ -73,10 +90,11 @@ public class NumberPickerPreference extends DialogPreference{
 
     private void updateValue() {
         int value =  getSharedPreferences().getInt(getKey(),DEFAULT_VALUE);
-        if(view !=null){
-            TextView TxtValue = (TextView) view.findViewById(R.id.pref_view_value);
-            TxtValue.setText(String.valueOf(value));
-        }
+        //if(view !=null){
+            //TextView TxtValue = (TextView) view.findViewById(R.id.pref_view_value);
+            //TxtValue.setText(String.valueOf(value));
+            String title = getContext().getString(R.string.title_low_battery_percent);
+            setTitle(title.concat(" ").concat(String.valueOf(value)).concat("%"));
+        //}
     }
-
 }

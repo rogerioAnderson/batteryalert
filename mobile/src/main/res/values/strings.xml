@@ -103,5 +103,10 @@
     <string name="pref_header_phone">Phone</string>
     <string name="key_low_batery_level">key_low_batery_level</string>
     <string name="title_low_battery_percent">Alert when Battery is lower then</string>
+    <string name="ringtone_low_battery">Ringtone Low Battery</string>
+    <string name="notifcation_low_battery">Notification Tone</string>
+    <string name="pref_header_wear">Wearable</string>
+    <string name="key_low_battery_wear_alert">key_low_battery_wear_alert</string>
+    <string name="key_low_batery_wear_level">key_low_batery_wear_level</string>
 
 </resources>

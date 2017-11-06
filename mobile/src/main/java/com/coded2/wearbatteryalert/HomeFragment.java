@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -293,7 +294,7 @@ public class HomeFragment extends Fragment {
     public void requestBattertStatysFromWear(){
         Log.d(Constants.PACKAGE_NAME,"requestBattertStatysFromWear()");
         if(capbilityNode!=null){
-            Log.d(getActivity().getPackageName(),"node name: "+capbilityNode.getDisplayName());
+            Log.d(Constants.PACKAGE_NAME,"node name: "+capbilityNode.getDisplayName());
             final PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(wearApiClient, capbilityNode.getId(), PATH_BATTERY_REQUEST, null);
             result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
                 @Override
@@ -301,9 +302,19 @@ public class HomeFragment extends Fragment {
                         if(sendMessageResult.getStatus().isSuccess()){
                                 Toast.makeText(getActivity(),"Request Battery from your wearable", Toast.LENGTH_SHORT).show();
                                 Log.d(Constants.PACKAGE_NAME,sendMessageResult.getStatus().toString());
+
+                            PreferenceManager.getDefaultSharedPreferences(getActivity())
+                                    .edit()
+                                    .putBoolean(Constants.PREFERENCE.EXISTS_WEAREBLE,true)
+                                    .apply();
+
+
                         }else{
-                                Toast.makeText(getActivity(),"Failed on wear battery status request", Toast.LENGTH_SHORT).show();
-                                Log.e(getActivity().getPackageName(),sendMessageResult.getStatus().toString());
+                                if(getActivity()!=null){
+                                    Toast.makeText(getActivity(),"Failed on wear battery status request", Toast.LENGTH_SHORT).show();
+                                    Log.e(getActivity().getPackageName(),sendMessageResult.getStatus().toString());
+                                }
+
                         }
                 }
             });

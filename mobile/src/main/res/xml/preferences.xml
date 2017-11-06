@@ -11,18 +11,48 @@
         </PreferenceCategory>
 
        <PreferenceCategory android:title="@string/pref_header_phone">
-        <SwitchPreference
-            android:title="@string/label_low_battery_alert"
-            android:key="@string/key_low_battery_alert"
-            android:defaultValue="false"/>
+            <SwitchPreference
+                android:title="@string/label_low_battery_alert"
+                android:key="@string/key_low_battery_alert"
+                android:defaultValue="false"/>
+
+            <com.coded2.preference.NumberPickerPreference
+                android:key="@string/key_low_batery_level"
+                android:title="@string/title_low_battery_percent"
+                android:widgetLayout="@layout/custom_value_view_preference"
+                android:dialogLayout="@layout/numberpicker_preference"
+                android:dependency="@string/key_low_battery_alert">
+            </com.coded2.preference.NumberPickerPreference>
+           <RingtonePreference
+               android:ringtoneType="notification"
+               android:key="key_low_battery_notification"
+               android:dependency="@string/key_low_battery_alert"
+               android:title="@string/notifcation_low_battery">
+           </RingtonePreference>
+
        </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_header_wear">
+        <SwitchPreference
+            android:title="@string/label_low_battery_alert"
+            android:key="@string/key_low_battery_wear_alert"
+            android:defaultValue="false"/>
+
         <com.coded2.preference.NumberPickerPreference
-            android:key="@string/key_low_batery_level"
+            android:key="@string/key_low_batery_wear_level"
             android:title="@string/title_low_battery_percent"
             android:widgetLayout="@layout/custom_value_view_preference"
             android:dialogLayout="@layout/numberpicker_preference"
-            android:dependency="@string/key_low_battery_alert">
+            android:dependency="@string/key_low_battery_wear_alert">
         </com.coded2.preference.NumberPickerPreference>
+        <RingtonePreference
+            android:ringtoneType="notification"
+            android:key="key_low_battery_wear_notification"
+            android:dependency="@string/key_low_battery_wear_alert"
+            android:title="@string/notifcation_low_battery">
+        </RingtonePreference>
+
+    </PreferenceCategory>
+
 
 </PreferenceScreen>
